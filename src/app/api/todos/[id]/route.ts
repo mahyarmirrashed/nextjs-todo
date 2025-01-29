@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } },
+  context: { params: { id: string } },
 ) {
   const userId = req.headers.get("x-user-id");
   if (!userId) {
@@ -17,7 +17,7 @@ export async function DELETE(
   }
 
   await prisma.todo.delete({
-    where: { id: Number(params.id), userId: Number(userId) },
+    where: { id: Number(context.params.id), userId: Number(userId) },
   });
   return NextResponse.json(
     { message: "Todo deleted" },
@@ -27,7 +27,7 @@ export async function DELETE(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } },
+  context: { params: { id: string } },
 ) {
   const userId = req.headers.get("x-user-id");
   if (!userId) {
@@ -38,7 +38,7 @@ export async function PATCH(
   }
 
   const updatedTodo = await prisma.todo.update({
-    where: { id: Number(params.id), userId: Number(userId) },
+    where: { id: Number(context.params.id), userId: Number(userId) },
     data: { completed: true },
   });
   return NextResponse.json(updatedTodo, { status: StatusCodes.OK });
