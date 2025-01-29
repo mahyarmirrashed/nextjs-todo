@@ -12,20 +12,33 @@ export async function POST(req: Request) {
   if (!username || !password) {
     return NextResponse.json(
       { error: "Email and password required" },
-      { status: StatusCodes.BAD_REQUEST }
+      { status: StatusCodes.BAD_REQUEST },
     );
   }
 
   const user = await prisma.user.findUnique({ where: { username } });
   if (!user) {
-    return NextResponse.json({ error: "User does not exist" }, { status: StatusCodes.NOT_FOUND });
+    return NextResponse.json(
+      { error: "User does not exist" },
+      { status: StatusCodes.NOT_FOUND },
+    );
   }
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return NextResponse.json({ error: "Invalid credentials" }, { status: StatusCodes.UNAUTHORIZED })
+    return NextResponse.json(
+      { error: "Invalid credentials" },
+      { status: StatusCodes.UNAUTHORIZED },
+    );
   }
 
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET as string, { expiresIn: "7d" })
-  return NextResponse.json({ message: "Login successful", token }, { status: StatusCodes.OK })
+  const token = jwt.sign(
+    { userId: user.id },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "7d" },
+  );
+  return NextResponse.json(
+    { message: "Login successful", token },
+    { status: StatusCodes.OK },
+  );
 }
