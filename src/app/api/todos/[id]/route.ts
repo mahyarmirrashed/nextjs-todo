@@ -1,13 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
 export async function DELETE(
-  req: Request,
-  context: { params: { id: string } },
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await context.params;
+
   const userId = req.headers.get("x-user-id");
   if (!userId) {
     return NextResponse.json(
@@ -17,7 +19,7 @@ export async function DELETE(
   }
 
   await prisma.todo.delete({
-    where: { id: Number(context.params.id), userId: Number(userId) },
+    where: { id: Number(id), userId: Number(userId) },
   });
   return NextResponse.json(
     { message: "Todo deleted" },
@@ -26,9 +28,11 @@ export async function DELETE(
 }
 
 export async function PATCH(
-  req: Request,
-  context: { params: { id: string } },
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await context.params;
+
   const userId = req.headers.get("x-user-id");
   if (!userId) {
     return NextResponse.json(
@@ -38,7 +42,7 @@ export async function PATCH(
   }
 
   const updatedTodo = await prisma.todo.update({
-    where: { id: Number(context.params.id), userId: Number(userId) },
+    where: { id: Number(id), userId: Number(userId) },
     data: { completed: true },
   });
   return NextResponse.json(updatedTodo, { status: StatusCodes.OK });

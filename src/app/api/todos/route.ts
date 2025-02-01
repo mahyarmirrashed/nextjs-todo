@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { StatusCodes } from "http-status-codes";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const userId = req.headers.get("x-user-id");
   if (!userId) {
     return NextResponse.json(
@@ -19,7 +19,7 @@ export async function GET(req: Request) {
   return NextResponse.json(todos, { status: StatusCodes.OK });
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   const userId = req.headers.get("x-user-id");
   if (!userId) {
     return NextResponse.json(
