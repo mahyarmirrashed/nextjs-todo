@@ -1,0 +1,22 @@
+services:
+  database:
+    image: postgres:17.2-alpine3.21
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    env_file: .env
+    restart: always
+
+  backend:
+    build:
+      context: .
+    ports:
+      - 3000:3000
+      - 5555:5555
+    env_file: .env
+    depends_on:
+      - database
+    restart: always
+    command: ["pnpm", "run", "dev"]
+
+volumes:
+  db_data:
