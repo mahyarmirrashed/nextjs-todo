@@ -2,6 +2,6 @@ services:
   backend:
     develop:
       watch:
-        - path: ./src
-          target: /app/src
+        - path: .
+          target: /app
           action: sync
